@@ -1,0 +1,69 @@
+{
+  "name": "ai-trip-planner-backend",
+  "version": "2.0.0",
+  "description": "Production-grade RAG and SSE backend for an AI trip planner.",
+  "main": "dist/src/server.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev:docker": "docker compose up --build",
+    "prebuild": "npm run type-check",
+    "build": "tsc",
+    "start": "node dist/src/server.js",
+    "start:prod": "node dist/src/server.js",
+    "deploy:check": "npm run type-check && npm run lint && npm test && npm run build && npm run build:index",
+    "build:index": "ts-node scripts/build-rag-index.ts",
+    "load:smoke": "ts-node scripts/load-smoke.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src scripts tests --ext .ts --max-warnings 0",
+    "type-check": "tsc --noEmit",
+    "check": "npm run type-check && npm run lint && npm test && npm run build",
+    "audit:prod": "npm audit --omit=dev"
+  },
+  "keywords": [
+    "travel",
+    "trip-planner",
+    "rag",
+    "gemini",
+    "sse",
+    "typescript"
+  ],
+  "author": "Yash Sharma",
+  "license": "MIT",
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "@xenova/transformers": "^2.17.2",
+    "axios": "^1.7.9",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "faiss-node": "^0.5.1",
+    "firebase-admin": "^13.0.2",
+    "helmet": "^8.0.0",
+    "pino": "^9.6.0",
+    "pino-http": "^10.4.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.2",
+    "@types/supertest": "^6.0.2",
+    "@typescript-eslint/eslint-plugin": "^8.18.2",
+    "@typescript-eslint/parser": "^8.18.2",
+    "eslint": "^8.57.1",
+    "supertest": "^7.0.0",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "overrides": {
+    "@tootallnate/once": "^3.0.1",
+    "protobufjs": "^7.5.5"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
