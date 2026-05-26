@@ -4,3 +4,15 @@ dist/
 coverage/
 data/faiss.index
 *.log
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+credentials.json
+service-account*.json
+__pycache__/
+.DS_Store
+build/
+.vercel/
+.railway/
