@@ -1,7 +1,7 @@
 {
   "name": "ai-trip-planner-backend",
   "version": "2.0.0",
-  "description": "Production-grade RAG and SSE backend for an AI trip planner.",
+  "description": "RAG and SSE backend for an AI trip planner.",
   "main": "dist/src/server.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",

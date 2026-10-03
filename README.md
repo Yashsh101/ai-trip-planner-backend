@@ -1,7 +1,7 @@
 # 🚀 AI Trip Planner Backend
 
-Production-grade backend for an AI-powered trip planning system.  
-Designed with scalability, reliability, and real-world backend engineering practices.
+Backend for an AI-powered trip planning system.
+It demonstrates RAG, streaming generation, validation, retries, caching, and testable service boundaries.
 
 ---
 
@@ -13,7 +13,7 @@ This service generates personalized travel itineraries using AI, combining:
 - External APIs (Maps, Weather)
 - Async job processing
 
-Built to reflect **Big Tech-level backend architecture**.
+The repository is structured as a portfolio-scale backend reference; production capacity and deployment SLAs remain environment-dependent.
 
 ---
 
@@ -32,17 +32,17 @@ Built to reflect **Big Tech-level backend architecture**.
 ## 🏗️ Architecture Highlights
 
 - **AI Orchestrator Layer**
-  - Prompt control, retries, fallback models  
+  - Prompt control, retries, fallback models
 - **Async Job Queue**
-  - Non-blocking itinerary generation  
+  - Non-blocking itinerary generation
 - **Caching Layer**
-  - Memory-first, Redis-ready  
+  - Memory-first, Redis-ready
 - **Reliability**
-  - Retry, timeout, circuit breaker  
+  - Retry, timeout, circuit breaker
 - **Observability**
-  - Structured logs, metrics, request tracing  
+  - Structured logs, metrics, request tracing
 - **API Design**
-  - Versioned (`/api/v1`), idempotent, validated  
+  - Versioned (`/api/v1`), idempotent, validated
 
 ---
 
@@ -82,7 +82,7 @@ npm run build
 🐳 Docker
 docker-compose up --build
 
-📈 Production Features
+📈 Implemented Features
 Rate limiting + caching
 Idempotent requests
 Fault-tolerant AI pipeline
@@ -93,7 +93,7 @@ CI/CD ready
 Simulates real-world backend systems
 Demonstrates system design thinking
 Focus on reliability over hype
-Built for scalable AI workloads
+Built to demonstrate AI workload orchestration
 
 📌 Future Improvements
 Redis-backed queue + cache
@@ -101,5 +101,5 @@ Load testing & performance metrics
 Multi-region deployment
 
 👨‍💻 Author
-Built as a production-grade backend system for AI and distributed systems.  
+Built as a portfolio backend system for AI and distributed systems.
 If you find this project valuable, consider giving it a ⭐ to support the work.
