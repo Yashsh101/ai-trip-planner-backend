@@ -1,105 +1,99 @@
-# 🚀 AI Trip Planner Backend
+# AI Trip Planner — Backend
 
-Backend for an AI-powered trip planning system.
-It demonstrates RAG, streaming generation, validation, retries, caching, and testable service boundaries.
+Node.js + TypeScript backend for AI itinerary generation. It demonstrates Gemini orchestration, retrieval-assisted context, validation, retries, caching, rate limits, and REST/SSE boundaries without claiming production capacity or an SLA.
 
----
+## Problem
 
-## 🧠 Overview
+Itinerary generation is a long-running, failure-prone AI workflow. This service exposes both a streaming request path for interactive clients and an async job path for queue-style consumers, with schema validation and explicit error handling.
 
-This service generates personalized travel itineraries using AI, combining:
-- LLM orchestration (Gemini)
-- Retrieval-Augmented Generation (RAG)
-- External APIs (Maps, Weather)
-- Async job processing
+## Architecture
 
-The repository is structured as a portfolio-scale backend reference; production capacity and deployment SLAs remain environment-dependent.
+```mermaid
+flowchart LR
+  A[Trip request] --> B[Express + Zod validation]
+  B --> C[Rate limiter + request ID]
+  C --> D[AI orchestrator]
+  D --> E[Gemini + RAG/external APIs]
+  D --> F[Retry / timeout / circuit breaker]
+  D --> G[Memory cache]
+  E --> H[SSE meta/token/done/error]
+  B --> I[Async job queue]
+  I --> J[GET job status]
+```
 
----
+## Current APIs
 
-## ⚙️ Tech Stack
+| Route | Behavior |
+|---|---|
+| `GET /api/v1/health` | Service health |
+| `POST /api/v1/itinerary/generate` | Validated generation; cached JSON or SSE stream |
+| `POST /api/v1/itinerary/generate-async` | Returns `202` and a job ID |
+| `GET /api/v1/itinerary/jobs/:id` | Reads async job status |
+| `POST /api/v1/itinerary/evaluate` | Scores a supplied itinerary/request pair |
 
-- **Node.js + TypeScript**
-- **Express.js**
-- **Firebase (Firestore)**
-- **Gemini AI (LLM)**
-- **Zod (validation)**
-- **Docker + CI/CD**
-- **REST APIs + SSE**
+The frontend uses `/api/v1/itinerary/generate`. The older README’s async-only flow was incomplete.
 
----
+## Quickstart
 
-## 🏗️ Architecture Highlights
+### 1. Clone and install
 
-- **AI Orchestrator Layer**
-  - Prompt control, retries, fallback models
-- **Async Job Queue**
-  - Non-blocking itinerary generation
-- **Caching Layer**
-  - Memory-first, Redis-ready
-- **Reliability**
-  - Retry, timeout, circuit breaker
-- **Observability**
-  - Structured logs, metrics, request tracing
-- **API Design**
-  - Versioned (`/api/v1`), idempotent, validated
-
----
-
-## 🔌 Core APIs
-
-```http
-GET  /api/v1/health
-POST /api/v1/itinerary/generate-async
-GET  /api/v1/itinerary/jobs/:id
-
-🔄 Flow
-Client → Submit trip request
-→ Async job created
-→ AI + APIs process itinerary
-→ Client polls job status
-→ Final itinerary returned
-
-🚀 Local Setup
-git clone <repo>
+```bash
+git clone https://github.com/Yashsh101/ai-trip-planner-backend.git
 cd ai-trip-planner-backend
-npm install
+npm ci
+```
+
+### 2. Configure
+
+```bash
 cp .env.example .env
+# Set GEMINI_API_KEY for real generation.
+# Configure Firebase/Redis/external API values only for the features you use.
+```
+
+Never commit `.env`, Firebase credentials, or provider keys.
+
+### 3. Run
+
+```bash
 npm run dev
+```
 
-🔐 Environment Variables
-GEMINI_API_KEY=
-FIREBASE_PROJECT_ID=
-FIREBASE_CLIENT_EMAIL=
-FIREBASE_PRIVATE_KEY=
-OPENWEATHER_API_KEY=
-GOOGLE_MAPS_API_KEY=
+Use `npm run build && npm start` for the compiled server. The default port is controlled by `PORT`.
 
-🧪 Testing
-npm run test
+## Verification
+
+```bash
+npm ci
+npm run type-check
+npm run lint
+npm test
 npm run build
+```
 
-🐳 Docker
-docker-compose up --build
+CI runs these checks and builds the RAG index. No live generation or performance number is claimed without a configured provider and fixed test inputs.
 
-📈 Implemented Features
-Rate limiting + caching
-Idempotent requests
-Fault-tolerant AI pipeline
-Health + readiness endpoints
-CI/CD ready
+## Evaluation
 
-🎯 Why This Project Stands Out
-Simulates real-world backend systems
-Demonstrates system design thinking
-Focus on reliability over hype
-Built to demonstrate AI workload orchestration
+- **Dataset:** No representative travel benchmark is committed.
+- **Metrics:** The evaluator route exists, but quality, latency, throughput, and cost results are **pending verification**.
+- **Baseline:** No external baseline is claimed.
+- **Reproduction:** Use `POST /api/v1/itinerary/evaluate` with a validated itinerary/request pair; add a versioned fixture before publishing scores.
 
-📌 Future Improvements
-Redis-backed queue + cache
-Load testing & performance metrics
-Multi-region deployment
+## Failure handling and security
 
-👨‍💻 Author
-Built as a portfolio backend system for AI and distributed systems.
-If you find this project valuable, consider giving it a ⭐ to support the work.
+- Zod rejects malformed trip requests before orchestration.
+- Provider failures are translated into structured application errors; SSE errors terminate the stream safely.
+- Retry, timeout, circuit-breaker, and rate-limit settings are environment-controlled.
+- Firebase private keys and API credentials must stay in deployment secrets.
+- Memory cache and the in-process job queue are not durable multi-instance infrastructure.
+
+## Deployment status and roadmap
+
+Docker and CI configuration are present. A verified public backend URL is **pending verification**. Before sharing a deployment, verify health, generation, SSE completion, and job-status behavior with non-production test credentials.
+
+Roadmap: add a deterministic SSE contract fixture, persistent queue/cache, realistic itinerary evaluation data, load testing, and an end-to-end staging check with the frontend.
+
+## License
+
+MIT — see [`LICENSE`](LICENSE).
