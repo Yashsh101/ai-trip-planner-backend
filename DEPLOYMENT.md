@@ -1,8 +1,8 @@
 # Deployment Guide
 
-This backend is deployment-ready as a containerized Node.js service. Prefer Cloud Run for production:
-it handles long-running HTTP/SSE requests better than Firebase Functions and works cleanly with the
-existing Dockerfile, health checks, and local FAISS assets.
+This guide documents how to deploy the containerized Node.js service. Cloud Run is one possible target:
+it supports long-running HTTP/SSE requests and works with the existing Dockerfile, health checks, and
+local FAISS assets. No production deployment, capacity, SLA, or performance result is claimed here.
 
 Sources checked April 30, 2026:
 - Cloud Run container services: https://cloud.google.com/run/docs/configuring/services/containers
@@ -17,7 +17,7 @@ Sources checked April 30, 2026:
 
 | Area | Status |
 | --- | --- |
-| Env vars | Typed Zod validation fails fast on missing production secrets. Use `.env.production.example` as the source of truth. |
+| Env vars | Typed Zod validation fails fast when required secrets are missing. Use `.env.production.example` as the source of truth. |
 | Build/start | `npm run build` compiles TypeScript; `npm start` runs `dist/src/server.js`. `npm run deploy:check` runs the full predeploy gate plus RAG index build. |
 | Docker | Multi-stage Dockerfile builds the FAISS index and production JS, then installs production dependencies only. |
 | Cloud Run | Compatible. App reads `PORT`; Cloud Run injects `PORT`. The service exposes HTTP endpoints and SSE over one port. |
@@ -26,7 +26,7 @@ Sources checked April 30, 2026:
 | CORS/security | Helmet is enabled; CORS is restricted to `CORS_ORIGIN`; rate limits are env-configurable. |
 | Logging | Structured Pino logs include request IDs, API latency metrics, provider metrics, and error events. |
 
-## Required Production Variables
+## Required Deployment Variables
 
 Set all variables from `.env.production.example` in the hosting provider. At minimum:
 
